@@ -1,0 +1,634 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GLITCH | VR Unbound</title>
+    <!-- Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Jura:wght@400;600;700&display=swap" rel="stylesheet">
+    
+    <!-- Libraries -->
+    <script src="https://cdn.jsdelivr.net/npm/tsparticles@2/tsparticles.bundle.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+    <script src="https://unpkg.com/split-type"></script>
+    
+    <style>
+        :root {
+            --dark-panel: #111114;
+            --glass-bg: rgba(255, 255, 255, 0.05);
+            --glass-border: rgba(255, 255, 255, 0.15);
+            --accent-orange: #ff5500;
+            --text-main: #f0f0f0;
+            --text-muted: #888888;
+            --font-head: 'Orbitron', sans-serif;
+            --font-body: 'Jura', sans-serif;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body, html {
+            width: 100vw;
+            height: 100vh;
+            overflow: hidden;
+            font-family: var(--font-body);
+            color: var(--text-main);
+            background: #000;
+        }
+
+        /* Particles & Background Image */
+        #tsparticles {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 1;
+        }
+
+        .bg-image {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            /* Cyberpunk / VR City placeholder background */
+            background: url('https://images.unsplash.com/photo-1535223289827-42f1e9919769?q=80&w=1920&auto=format&fit=crop') center/cover;
+            opacity: 0.7;
+            z-index: 0;
+        }
+
+        /* Glassmorphism Outer Layout */
+        .layout-wrapper {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            right: 20px;
+            bottom: 20px;
+            z-index: 5;
+            display: grid;
+            grid-template-columns: 1fr;
+            grid-template-rows: auto 1fr auto;
+            pointer-events: none; /* Let clicks pass to inner elements */
+        }
+
+        /* ========================
+           HEADER AREA (Pills)
+           ======================== */
+        .top-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            pointer-events: auto;
+            margin-bottom: 15px;
+            z-index: 10;
+        }
+
+        .glass-pill {
+            background: var(--glass-bg);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border: 1px solid var(--glass-border);
+            border-radius: 50px;
+            box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.3);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .logo-pill {
+            padding: 10px 40px;
+            font-family: var(--font-head);
+            font-size: 1.8rem;
+            letter-spacing: 4px;
+            font-weight: 900;
+            color: #fff;
+        }
+
+        .controls-group {
+            display: flex;
+            gap: 15px;
+        }
+
+        .icon-pill {
+            width: 60px;
+            height: 60px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .icon-pill:hover {
+            background: rgba(255, 255, 255, 0.15);
+            transform: translateY(-2px);
+            box-shadow: 0 10px 40px 0 rgba(255, 85, 0, 0.2);
+            border-color: rgba(255, 85, 0, 0.4);
+        }
+
+        .icon-pill svg {
+            width: 24px;
+            height: 24px;
+            stroke: #fff;
+            fill: none;
+            stroke-width: 2;
+        }
+
+        .contact-pill {
+            padding: 0 30px;
+            height: 60px;
+            gap: 15px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .contact-pill:hover {
+            background: rgba(255, 255, 255, 0.15);
+            transform: translateY(-2px);
+        }
+
+        .contact-icon {
+            background: #fff;
+            color: #000;
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .contact-icon svg {
+            width: 18px;
+            height: 18px;
+            stroke: #000;
+        }
+
+        /* ========================
+           MAIN DARK PANEL
+           ======================== */
+        .main-panel {
+            position: relative;
+            background: var(--dark-panel);
+            border-radius: 40px;
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+            pointer-events: auto;
+            border: 1px solid rgba(255,255,255,0.05);
+            box-shadow: 0 30px 60px rgba(0,0,0,0.5);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        /* The Main Character/Image overlay */
+        .main-char-img {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            /* VR Character Placeholder */
+            background: url('https://images.unsplash.com/photo-1622979135225-d2ba269cf1ac?q=80&w=2070&auto=format&fit=crop') center/cover;
+            opacity: 0.6; /* dimmed to let UI pop */
+            transform-origin: center;
+        }
+
+        .bg-text-watermark {
+            position: absolute;
+            top: 30%;
+            left: 5%;
+            font-family: var(--font-head);
+            font-size: 15vw;
+            color: rgba(255,255,255,0.02);
+            pointer-events: none;
+            letter-spacing: -2px;
+            z-index: 1;
+        }
+
+        /* Foreground Content */
+        .main-content {
+            position: relative;
+            z-index: 10;
+            width: 100%;
+            height: 100%;
+            padding: 50px;
+        }
+
+        .title-container {
+            position: absolute;
+            bottom: 10%;
+            left: 5%;
+            font-family: var(--font-head);
+            font-size: 4vw;
+            line-height: 1.1;
+            text-transform: uppercase;
+            font-weight: 900;
+            max-width: 60%;
+        }
+
+        .title-line {
+            display: block;
+            overflow: hidden;
+        }
+
+        .word {
+            display: inline-block;
+            transform: translateY(110%); /* for initial animation */
+        }
+
+        .shop-now-btn {
+            position: absolute;
+            top: 40px;
+            right: 40px;
+            background: rgba(255,255,255,0.9);
+            color: #000;
+            padding: 15px 40px;
+            border-radius: 50px;
+            font-size: 0.9rem;
+            font-weight: 800;
+            cursor: pointer;
+            border: none;
+            transition: all 0.3s;
+        }
+
+        .shop-now-btn:hover {
+            background: #fff;
+            transform: scale(1.05);
+            box-shadow: 0 0 20px rgba(255,255,255,0.4);
+        }
+
+        /* UI Overlays (Dots and Lines) */
+        .tech-line {
+            position: absolute;
+            display: flex;
+            align-items: center;
+        }
+
+        .tech-dot {
+            width: 8px;
+            height: 8px;
+            background: #fff;
+            border-radius: 50%;
+            box-shadow: 0 0 10px rgba(255,255,255,0.8);
+            position: relative;
+            opacity: 0;
+        }
+
+        .tech-dot::before {
+            content: '';
+            position: absolute;
+            top: -4px;
+            left: -4px;
+            width: 16px;
+            height: 16px;
+            border: 1px solid rgba(255,255,255,0.4);
+            border-radius: 50%;
+            opacity: 0;
+            animation: pulseDot 2s infinite;
+        }
+
+        @keyframes pulseDot {
+            0% { transform: scale(1); opacity: 1; }
+            100% { transform: scale(2); opacity: 0; }
+        }
+
+        .tech-stroke {
+            height: 1px;
+            background: rgba(255,255,255,0.5);
+            width: 0; /* animated JS */
+        }
+
+        .tech-label {
+            margin-left: 15px;
+            opacity: 0; /* animated JS */
+        }
+
+        .tech-label h4 {
+            font-size: 0.75rem;
+            letter-spacing: 2px;
+            color: var(--text-muted);
+            margin-bottom: 2px;
+        }
+
+        .tech-label p {
+            font-size: 1.1rem;
+            font-weight: 700;
+            color: #fff;
+        }
+
+        /* Hardcoded positions simulating the screenshot overlays */
+        #ui-1 { top: 25%; left: 15%; flex-direction: row-reverse; }
+        #ui-1 .tech-label { margin-left: 0; margin-right: 15px; text-align: right; }
+        #ui-1 .tech-stroke { margin-left: 15px; } /* flipped */
+
+        #ui-2 { top: 45%; right: 25%; }
+        #ui-3 { top: 65%; right: 15%; }
+
+        /* ========================
+           BOTTOM RIGHT WIDGETS
+           ======================== */
+        .bottom-widgets {
+            position: absolute;
+            bottom: 40px;
+            right: 40px;
+            display: flex;
+            align-items: flex-end;
+            gap: 15px;
+            pointer-events: auto;
+            z-index: 20;
+        }
+
+        .thumbnail-card {
+            width: 300px;
+            height: 140px;
+            padding: 15px;
+            display: flex;
+            align-items: center;
+            gap: 20px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .thumb-img {
+            width: 100px;
+            height: 100px;
+            border-radius: 12px;
+            object-fit: cover;
+            /* VR Thumbnail placeholder */
+            background: url('https://images.unsplash.com/photo-1593508512255-86ab42a8e620?q=80&w=800&auto=format&fit=crop') center/cover;
+        }
+
+        .thumb-info h5 {
+            font-size: 0.6rem;
+            color: var(--text-muted);
+            letter-spacing: 1px;
+            margin-bottom: 5px;
+            text-transform: uppercase;
+        }
+        
+        .thumb-info p {
+            font-size: 1.2rem;
+            font-weight: 700;
+            color: #fff;
+        }
+
+        .thumb-nav {
+            display: flex;
+            gap: 10px;
+        }
+
+        .nav-btn {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: #000;
+            border: 1px solid rgba(255,255,255,0.2);
+            color: #fff;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .nav-btn:hover {
+            background: rgba(255,255,255,0.1);
+            border-color: var(--accent-orange);
+            color: var(--accent-orange);
+        }
+
+    </style>
+</head>
+<body>
+
+    <div class="bg-image"></div>
+    <div id="tsparticles"></div>
+
+    <div class="layout-wrapper">
+        
+        <!-- HEADER ROW -->
+        <div class="top-row">
+            <div class="glass-pill logo-pill">
+                GLITCH
+            </div>
+            <div class="controls-group">
+                <div class="glass-pill icon-pill search-btn">
+                    <svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+                </div>
+                <div class="glass-pill icon-pill cart-btn">
+                    <svg viewBox="0 0 24 24"><path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"></path><line x1="3" y1="6" x2="21" y2="6"></line><path d="M16 10a4 4 0 0 1-8 0"></path></svg>
+                </div>
+                <div class="glass-pill contact-pill">
+                    <div class="contact-icon">
+                        <svg viewBox="0 0 24 24"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path><polyline points="22,6 12,13 2,6"></polyline></svg>
+                    </div>
+                    <span style="font-size: 0.9rem; font-weight: 600;">Contact</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- MAIN PANEL -->
+        <div class="main-panel">
+            <div class="main-char-img" id="main-parallax"></div>
+            <div class="bg-text-watermark">GLITCH</div>
+
+            <div class="main-content">
+                <button class="shop-now-btn">SHOP NOW</button>
+                
+                <div class="title-container" id="main-title">
+                    VIRTUAL <br> REALITY, <br> UNBOUND.
+                </div>
+
+                <!-- Product Overlays -->
+                <div class="tech-line" id="ui-1">
+                    <div class="tech-label">
+                        <h4>HAPTIC NEURO-LINK</h4>
+                        <p>$230</p>
+                    </div>
+                    <div class="tech-stroke" data-width="120px"></div>
+                    <div class="tech-dot"></div>
+                </div>
+
+                <div class="tech-line" id="ui-2">
+                    <div class="tech-dot"></div>
+                    <div class="tech-stroke" data-width="150px"></div>
+                    <div class="tech-label">
+                        <h4>OMNI-MOTION GLOVES</h4>
+                        <p>$120</p>
+                    </div>
+                </div>
+
+                <div class="tech-line" id="ui-3">
+                    <div class="tech-dot"></div>
+                    <div class="tech-stroke" data-width="100px"></div>
+                    <div class="tech-label">
+                        <h4>SENSORY FEEDBACK SUIT</h4>
+                        <p>$450</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+    </div>
+
+    <!-- WIDGETS outside the grid to overlay the bottom right perfectly -->
+    <div class="bottom-widgets">
+        <div class="glass-pill thumbnail-card">
+            <div class="thumb-img"></div>
+            <div class="thumb-info">
+                <h5>CRIMSON PHANTOM</h5>
+                <p>$450</p>
+            </div>
+        </div>
+        <div class="thumb-nav">
+            <button class="glass-pill nav-btn">&larr;</button>
+            <button class="glass-pill nav-btn">&rarr;</button>
+        </div>
+    </div>
+
+
+    <script>
+        // -------------------------
+        // 1. Particle Initialization
+        // -------------------------
+        tsParticles.load("tsparticles", {
+            background: {
+                color: { value: "transparent" }
+            },
+            fpsLimit: 60,
+            interactivity: {
+                events: {
+                    onHover: { enable: true, mode: "repulse" },
+                    resize: true
+                },
+                modes: {
+                    repulse: { distance: 100, duration: 0.4 }
+                }
+            },
+            particles: {
+                color: { value: "#ff5500" }, // Accent orange particles
+                links: {
+                    color: "#ffffff",
+                    distance: 150,
+                    enable: true,
+                    opacity: 0.1,
+                    width: 1
+                },
+                move: {
+                    direction: "none",
+                    enable: true,
+                    outModes: { default: "bounce" },
+                    random: true,
+                    speed: 1,
+                    straight: false
+                },
+                number: { value: 60, density: { enable: true, area: 800 } },
+                opacity: { value: 0.5 },
+                shape: { type: "circle" },
+                size: { value: { min: 1, max: 3 } }
+            },
+            detectRetina: true
+        });
+
+        // -------------------------
+        // 2. GSAP Animations Setups
+        // -------------------------
+        // Initialize text splitting for the title
+        const splitTitle = new SplitType('#main-title', { types: 'lines, words' });
+        
+        // Custom wrapper for overflow hidden on lines for clean reveal
+        splitTitle.lines.forEach(line => {
+            const wrapper = document.createElement('div');
+            wrapper.classList.add('title-line');
+            line.parentNode.insertBefore(wrapper, line);
+            wrapper.appendChild(line);
+        });
+
+        const tl = gsap.timeline({ defaults: { ease: "power3.out" } });
+
+        // Initial states hidden
+        gsap.set('.glass-pill', { y: -50, opacity: 0 });
+        gsap.set('.thumbnail-card, .nav-btn', { y: 50, opacity: 0 });
+        gsap.set('.main-panel', { scale: 0.9, opacity: 0, borderRadius: '80px' });
+        gsap.set('.main-char-img', { scale: 1.2 });
+        gsap.set('.shop-now-btn', { opacity: 0, scale: 0.8 });
+
+        // -------------------------
+        // 3. The Page Load Sequence (Mind-Blowing Reveal)
+        // -------------------------
+        // 1. Reveal Main Panel beautifully
+        tl.to('.main-panel', {
+            scale: 1,
+            opacity: 1,
+            borderRadius: '40px',
+            duration: 1.5,
+            ease: "expo.out"
+        })
+        // 2. Image slow zoom out inside the panel
+        .to('.main-char-img', {
+            scale: 1,
+            duration: 3,
+            ease: "power2.out"
+        }, "-=1.5")
+        // 3. Drop down the top UI elements
+        .to('.logo-pill', { y: 0, opacity: 1, duration: 0.8 }, "-=2.5")
+        .to('.icon-pill, .contact-pill', { y: 0, opacity: 1, stagger: 0.1, duration: 0.8 }, "-=2.3")
+        // 4. Slide up the bottom UI elements
+        .to('.thumbnail-card', { y: 0, opacity: 1, duration: 0.8 }, "-=2.0")
+        .to('.nav-btn', { y: 0, opacity: 1, stagger: 0.1, duration: 0.8 }, "-=1.8")
+        // 5. Shop Now button pop in
+        .to('.shop-now-btn', { opacity: 1, scale: 1, duration: 0.6, ease: "back.out(1.7)" }, "-=1.5")
+        // 6. Text Glitch / Type Reveal
+        .fromTo(splitTitle.words, 
+            { y: "110%", opacity: 0 }, 
+            { y: "0%", opacity: 1, duration: 0.8, stagger: 0.05, ease: "power4.out" }, 
+            "-=1.5"
+        );
+
+        // -------------------------
+        // 4. Tech UI Lines Drawing Sequence
+        // -------------------------
+        const techLines = document.querySelectorAll('.tech-line');
+        techLines.forEach((line, index) => {
+            const dot = line.querySelector('.tech-dot');
+            const stroke = line.querySelector('.tech-stroke');
+            const targetWidth = stroke.getAttribute('data-width');
+            const label = line.querySelector('.tech-label');
+
+            const lineTl = gsap.timeline({ delay: 1.5 + (0.3 * index) });
+            
+            lineTl.to(dot, { opacity: 1, scale: 1, duration: 0.5, ease: "back.out(2)" })
+                  .to(stroke, { width: targetWidth, duration: 0.6, ease: "power2.out" })
+                  .to(label, { opacity: 1, x: line.id === 'ui-1' ? -10 : 10, duration: 0.4 }, "-=0.2"); // x dir depends on side
+        });
+
+        // -------------------------
+        // 5. Parallax on Mouse Move (Subtle depth)
+        // -------------------------
+        document.addEventListener('mousemove', (e) => {
+            const xAxis = (window.innerWidth / 2 - e.pageX) / 50;
+            const yAxis = (window.innerHeight / 2 - e.pageY) / 50;
+            
+            gsap.to('.main-char-img', {
+                x: xAxis,
+                y: yAxis,
+                duration: 1,
+                ease: "power1.out"
+            });
+            
+            gsap.to('.title-container', {
+                x: xAxis * -1.5,
+                y: yAxis * -1.5,
+                duration: 1,
+                ease: "power1.out"
+            });
+        });
+
+    </script>
+</body>
+</html>
