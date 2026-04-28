@@ -1,1546 +1,575 @@
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Red Queen Fantasy & Prizma Brixx</title>
+    <title>GLITCH | VR Unbound</title>
+    <!-- Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Jura:wght@400;600;700&display=swap" rel="stylesheet">
     
-    <!-- Premium Fonts -->
-    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700;900&family=Jura:wght@300;400;600&display=swap" rel="stylesheet">
-    
-    <!-- Animation Libraries -->
-    <script src="https://unpkg.com/@studio-freight/lenis@1.0.34/dist/lenis.min.js"></script>
+    <!-- Libraries -->
+    <script src="https://cdn.jsdelivr.net/npm/tsparticles@2/tsparticles.bundle.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
     <script src="https://unpkg.com/split-type"></script>
-
+    
     <style>
         :root {
-            --text-main: #ffffff;
-            --text-muted: #b0b0b0;
-            --font-head: 'Montserrat', sans-serif;
-            --font-sub: 'Jura', sans-serif;
-            --bg-dark: #0a0a0d;
-            --bg-glow: #632d30;
-            --accent: #ff3333;
-            --cyan: #00c8ff;
+            --dark-panel: #111114;
+            --glass-bg: rgba(255, 255, 255, 0.05);
+            --glass-border: rgba(255, 255, 255, 0.15);
+            --accent-orange: #ff5500;
+            --text-main: #f0f0f0;
+            --text-muted: #888888;
+            --font-head: 'Orbitron', sans-serif;
+            --font-body: 'Jura', sans-serif;
         }
-
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
-            cursor: none; /* custom cursor */
         }
-
         body, html {
             width: 100vw;
-            font-family: var(--font-sub);
+            height: 100vh;
+            overflow: hidden;
+            font-family: var(--font-body);
             color: var(--text-main);
-            background: var(--bg-dark);
-            overflow-x: hidden; /* only allow y scroll */
-            -webkit-font-smoothing: antialiased;
-        }
-
-        /* Lenis smooth scroll */
-        html.lenis { height: auto; }
-        .lenis.lenis-smooth { scroll-behavior: auto; }
-        .lenis.lenis-smooth [data-lenis-prevent] { overscroll-behavior: contain; }
-        .lenis.lenis-stopped { overflow: hidden; }
-
-        /* Custom Cursor */
-        .cursor-dot {
-            position: fixed;
-            top: 0; left: 0;
-            width: 8px; height: 8px;
-            background: var(--accent);
-            border-radius: 50%;
-            pointer-events: none;
-            z-index: 9999;
-            transform: translate(-50%, -50%);
-        }
-        .cursor-ring {
-            position: fixed;
-            top: 0; left: 0;
-            width: 40px; height: 40px;
-            border: 1px solid rgba(255, 51, 51, 0.5);
-            border-radius: 50%;
-            pointer-events: none;
-            z-index: 9998;
-            transform: translate(-50%, -50%);
-            transition: width 0.3s, height 0.3s, background 0.3s, border-color 0.3s;
-        }
-        .cursor-hover {
-            width: 80px; height: 80px;
-            background: rgba(255, 51, 51, 0.1);
-            border-color: rgba(255, 51, 51, 0.8);
-        }
-
-        /* ========================
-           HERO SECTION (Original UI)
-           ======================== */
-        .hero-section {
-            display: flex;
-            width: 100%;
-            height: 100vh;
-            position: relative;
-        }
-
-        .left-panel {
-            width: 45%;
-            height: 100%;
-            background: radial-gradient(circle at 100% 50%, var(--bg-glow) 0%, var(--bg-dark) 80%);
-            padding: 40px 60px;
-            display: flex;
-            flex-direction: column;
-            justify-content: space-between;
-            position: relative;
-            z-index: 10;
-            box-shadow: 20px 0 50px rgba(0,0,0,0.5); 
-        }
-
-        .top-nav {
-            display: flex;
-            gap: 40px;
-            font-family: var(--font-head);
-            font-size: 0.75rem;
-            letter-spacing: 2px;
-            font-weight: 700;
-            text-transform: uppercase;
-        }
-
-        .top-nav a {
-            color: var(--text-muted);
-            text-decoration: none;
-            transition: color 0.3s;
-            position: relative;
-        }
-
-        .top-nav a:hover, .top-nav a.active { color: var(--text-main); }
-        .top-nav a.active::after {
-            content: '';
-            position: absolute;
-            bottom: -5px; left: 0;
-            width: 100%; height: 1px;
-            background: var(--text-main);
-        }
-
-        .content-area { position: relative; transform: translateY(-5vh); }
-
-        .main-title {
-            font-family: var(--font-head);
-            font-size: 4vw;
-            font-weight: 900;
-            letter-spacing: -1px;
-            line-height: 1;
-            margin-bottom: 5px;
-            clip-path: polygon(0 0, 100% 0, 100% 100%, 0% 100%);
-        }
-
-        .sub-title {
-            font-family: var(--font-sub);
-            font-size: 3.5vw;
-            font-weight: 300;
-            letter-spacing: 5px;
-            line-height: 1;
-            margin-bottom: 30px;
-            text-align: right; 
-            width: 80%; 
-        }
-
-        .description {
-            font-size: 1rem;
-            color: var(--text-muted);
-            line-height: 1.5;
-            text-align: right;
-            width: 80%;
-            margin-bottom: 40px;
-            letter-spacing: 0.5px;
-        }
-
-        .btn-learn {
-            float: right;
-            margin-right: 20vw;
-            background: rgba(255,255,255,0.05);
-            backdrop-filter: blur(5px);
-            border: 1px solid rgba(255,255,255,0.4);
-            color: #fff;
-            padding: 12px 30px;
-            border-radius: 30px;
-            font-size: 0.75rem;
-            letter-spacing: 2px;
-            transition: all 0.4s ease;
-            position: relative;
-            overflow: hidden;
-        }
-
-        .btn-learn::before {
-            content: '';
-            position: absolute;
-            top: 0; left: -100%;
-            width: 100%; height: 100%;
-            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
-            transition: all 0.4s;
-        }
-
-        .btn-learn:hover::before { left: 100%; }
-        .btn-learn:hover {
-            background: rgba(255,255,255,0.15);
-            border-color: #fff;
-            transform: scale(1.05);
-        }
-
-        .slit-container { margin-top: 100px; display: flex; flex-direction: column; gap: 15px; }
-
-        .slit {
-            height: 20px;
-            width: 50%;
-            background-image: url('https://i.pinimg.com/736x/7f/3b/5c/7f3b5c97bf718ef19f6cad8e0e0979b8.jpg');
-            background-attachment: fixed;
-            background-size: cover;
-            background-position: center center;
-            border-radius: 10px;
-            box-shadow: inset 0 3px 10px rgba(0,0,0,0.8);
-            transform-origin: left;
-            transform: scaleX(0);
-        }
-
-        .slit:nth-child(2) { width: 75%; height: 20px; opacity: 0.7; }
-
-        .social-footer {
-            display: flex; gap: 30px;
-            font-size: 0.7rem; letter-spacing: 2px;
-            color: var(--text-muted); text-transform: uppercase;
-        }
-        .social-footer a { color: inherit; text-decoration: none; transition: color 0.3s; }
-        .social-footer a:hover { color: #fff; }
-
-        .right-panel {
-            width: 55%; height: 100%;
-            position: relative; overflow: hidden;
-            display: flex; justify-content: center; align-items: center;
-        }
-
-        .main-hero-img {
-            position: absolute;
-            top: 0; left: 0;
-            width: 100%; height: 100%;
-            object-fit: cover;
-            background: url('https://i.pinimg.com/736x/7f/3b/5c/7f3b5c97bf718ef19f6cad8e0e0979b8.jpg') center center/cover;
-            transform: scale(1.1);
-        }
-
-        .top-right-actions {
-            position: absolute; top: 40px; right: 50px;
-            display: flex; gap: 30px; z-index: 20;
-        }
-
-        .tr-icon {
-            color: rgba(255,255,255,0.8);
-            transition: color 0.3s, transform 0.3s;
-        }
-        .tr-icon:hover { color: #fff; transform: scale(1.1); }
-        .tr-icon svg { width: 20px; height: 20px; stroke: currentColor; fill: none; stroke-width: 2px; }
-
-        .glass-widget {
-            position: absolute;
-            bottom: 40px; right: 50px;
-            width: 320px;
-            background: rgba(25, 20, 25, 0.4);
-            backdrop-filter: blur(25px);
-            -webkit-backdrop-filter: blur(25px);
-            border: 1px solid rgba(255,255,255,0.15);
-            border-radius: 12px;
-            padding: 15px;
-            display: flex; gap: 15px; z-index: 20;
-            box-shadow: 0 20px 40px rgba(0,0,0,0.5);
-            transition: all 0.4s ease;
-        }
-
-        .glass-widget:hover {
-            background: rgba(35, 30, 35, 0.6);
-            border-color: rgba(255,255,255,0.3);
-            transform: translateY(-5px);
-        }
-
-        .widget-thumb {
-            width: 65px; height: 85px; border-radius: 6px;
-            background: url('https://i.pinimg.com/1200x/fd/3e/ce/fd3ecedd1a1ba74516c24822bb172a3f.jpg') center/cover;
-        }
-
-        .widget-info { display: flex; flex-direction: column; justify-content: center; }
-        .widget-info h4 { font-family: var(--font-sub); font-size: 0.9rem; font-weight: 600; margin-bottom: 5px; }
-        .widget-info p { font-size: 0.65rem; color: var(--text-muted); line-height: 1.4; }
-        .widget-info span { color: #fff; font-weight: 600; }
-        
-         /* ========================
-           SNAKE DECK SCROLL SECTION
-           ======================== */
-        .snake-scene {
-            position: relative;
-            width: 100vw;
-            height: 400vh; /* Extremely tall to allow pinning for long scrubbing */
             background: #000;
         }
-
-        .snake-pin {
-            position: relative;
-            width: 100vw;
-            height: 100vh;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            overflow: hidden;
-            background: #000;
-        }
-
-        /* Nav logic at the top of the dark section */
-        .sk-nav { position: absolute; top: 40px; left: 40px; right: 40px; display: flex; justify-content: space-between; z-index: 30; }
-        .sk-logo { font-size: 1.5rem; }
-        .sk-tabs { display: flex; gap: 20px; background: rgba(255,255,255,0.1); padding: 5px 20px; border-radius: 30px;}
-        .sk-tabs a { color: #fff; text-decoration: none; font-size: 0.8rem; }
-
-        /* Phase 1: Zoom In UI */
-        .snake-zoom-ui {
+        /* Particles & Background Image */
+        #tsparticles {
             position: absolute;
-            width: 100%; height: 100%;
-            display: flex; justify-content: center; align-items: center;
-            z-index: 5;
-        }
-
-        /* Abstract geometrical shapes (Like 'OUT' in user image) */
-        .zoom-geo {
-            position: absolute;
-            border: 40px solid #fff;
-            opacity: 0.9;
-        }
-        .zoom-o { width: 300px; height: 300px; border-radius: 50px; left: 20%; transform: rotate(45deg); }
-        .zoom-u { width: 300px; height: 300px; border-bottom-left-radius: 100px; border-bottom-right-radius: 100px; border-top: none; left: 50%; top: 50%; transform: translate(-50%, -20%); }
-        .zoom-text { position: absolute; bottom: 10%; right: 10%; width: 300px; font-size: 1.5rem; text-align: left; line-height: 1.2; }
-
-        .zm-prod {
-            position: absolute;
-            width: 350px; height: 350px;
-            object-fit: cover;
-            border-radius: 40px;
-            box-shadow: 0 40px 100px rgba(0,0,0,0.9);
-            z-index: 10;
-        }
-
-        /* Phase 2: Massive Faded Background Title */
-        .snake-bg-text {
-            position: absolute;
-            top: 50%; left: 50%;
-            transform: translate(-50%, -50%);
-            font-family: var(--font-head);
-            font-size: 7vw;
-            font-weight: 900;
-            line-height: 1;
-            text-align: center;
-            color: #fff;
-            opacity: 0;
-            z-index: 10;
-        }
-
-        /* Phase 3: Snake Deck Images */
-        .snake-deck {
-            position: absolute;
-            top: 0; left: 0;
-            width: 100%; height: 100%;
-            z-index: 20;
-            pointer-events: none; /* Let hover pass through unless directly on card */
-        }
-
-        .snake-card {
-            position: absolute;
-            top: 50%; left: 50%;
-            width: 280px; height: 380px;
-            margin-left: -140px; margin-top: -190px; /* Perfect centering */
-            border-radius: 20px;
-            object-fit: cover;
-            box-shadow: -15px 15px 40px rgba(0,0,0,0.8);
-            pointer-events: auto;
-            border: 4px solid #fff;
-        }
-
-
-        /* ========================
-           SHOWCASE SECTIONS (ZIG-ZAG)
-           ======================== */
-        .showcase-wrapper {
-            width: 100%;
-            background: var(--bg-dark);
-            position: relative;
-            z-index: 5;
-        }
-
-        .scroll-section {
-            display: flex;
-            width: 100%;
-            height: 100vh;
-            align-items: center;
-            justify-content: center;
-            overflow: hidden;
-            position: relative;
-        }
-        
-        .scroll-section.dir-right { flex-direction: row-reverse; }
-
-        .ss-img-container {
-            width: 50%;
-            height: 100%;
-            position: relative;
-            overflow: hidden;
-        }
-
-        .ss-img {
+            top: 0;
+            left: 0;
             width: 100%;
             height: 100%;
-            object-fit: cover;
-            transform: scale(1.1); /* for parallax */
-        }
-
-        .ss-text-container {
-            width: 50%;
-            padding: 80px;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-        }
-
-        /* Image Variables */
-        .img-1 { background: url('https://i.pinimg.com/1200x/fd/3e/ce/fd3ecedd1a1ba74516c24822bb172a3f.jpg') center/cover; }
-        .img-2 { background: url('https://i.pinimg.com/1200x/9a/08/dc/9a08dc8996b876d961d712802434bee4.jpg') center/cover; }
-        .img-3 { background: url('https://i.pinimg.com/736x/2c/d1/38/2cd13803cb6951c115902c32573d3422.jpg') center/cover; }
-
-        .ss-text-container h2 {
-            font-family: var(--font-head);
-            font-size: 4vw;
-            margin-bottom: 20px;
-            line-height: 1;
-            text-transform: uppercase;
-        }
-
-        .ss-text-container p {
-            font-size: 1.2rem;
-            color: var(--text-muted);
-            max-width: 500px;
-            line-height: 1.6;
-        }
-
-        /* ========================
-           FINALE: 3D PRIZMA BRIXX
-           ======================== */
-        .finale-section {
-            width: 100%;
-            height: 250vh; /* Extra height to allow scrolling while pinned */
-            position: relative;
-            background: #000;
-        }
-
-        .pin-container {
-            width: 100%;
-            height: 100vh;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            position: relative;
-            overflow: hidden;
-        }
-
-        .pin-bg {
-            position: absolute;
-            top: 0; left: 0;
-            width: 100%; height: 100%;
-            background: radial-gradient(circle at center, #300, #000 70%);
-            opacity: 0.3;
-        }
-
-        .prizma-text {
-            font-family: var(--font-head);
-            font-size: 8vw;
-            font-weight: 900;
-            text-align: center;
-            line-height: 0.9;
-            color: transparent;
-            -webkit-text-stroke: 2px rgba(255,255,255,0.8);
-            position: relative;
-            z-index: 10;
-            /* 3D styling setup */
-            perspective: 1000px;
-            transform-style: preserve-3d;
-            will-change: transform, opacity;
-        }
-
-        .prizma-fill {
-            position: absolute;
-            top: 0; left: 0;
-            width: 100%; height: 100%;
-            color: var(--text-main);
-            -webkit-text-stroke: 0px;
-            opacity: 0.3;
-        }
-
-        /* ========================
-           HORIZONTAL ARTSTATION GALLERY
-           ======================== */
-        .horizontal-section {
-            position: relative;
-            width: 100%;
-            height: 100vh;
-            background: #111418;
-            overflow: hidden;
-        }
-
-        .gallery-wrap {
-            width: 100%;
-            height: 100vh;
-            position: relative;
-        }
-
-        /* Top NavBar fake */
-        .gallery-nav {
-            position: absolute;
-            top: 30px; left: 50px;
-            display: flex; gap: 40px;
-            z-index: 20; color: #fff;
-            align-items: center;
-        }
-        
-        .gallery-nav-logo { font-family: var(--font-head); font-weight: 900; font-size: 1.2rem; color: white; display: flex; align-items: center; gap: 10px; }
-        .gallery-nav-links { display: flex; gap: 30px; font-size: 0.8rem; color: white; }
-
-        .gallery-container {
-            display: flex;
-            width: 300vw; /* Wide enough for cards */
-            height: 70vh;
-            padding-top: 80px;
-            will-change: transform;
-        }
-
-        .gallery-card {
-            width: 50vw;
-            height: 100%;
-            margin-left: -5vw;
-            position: relative;
-            clip-path: polygon(15% 0, 100% 0, 85% 100%, 0 100%);
-            overflow: hidden;
-            cursor: none; /* custom cursor */
-            transition: transform 0.5s cubic-bezier(0.2, 0.8, 0.2, 1);
             z-index: 1;
-            /* Border emulation inside clip path via shadow wouldn't work easily, so we use a clean cutoff */
         }
-
-        .gallery-card:nth-child(1) { margin-left: 0; width: 45vw; clip-path: polygon(0 0, 100% 0, 85% 100%, 0 100%); }
-
-        .gallery-card:hover {
-            transform: scale(1.05); /* Slight pop */
-            z-index: 10; /* Bring to front */
-        }
-
-        .gc-img {
-            width: 120%; /* Wider to prevent clip cutoff */
+        .bg-image {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
             height: 100%;
             object-fit: cover;
-            transform: translateX(-10%); /* Recenter inside skewed card */
-            filter: grayscale(100%);
-            transition: filter 0.5s ease;
+            /* Cyberpunk / VR City placeholder background */
+            background: url('https://images.unsplash.com/photo-1661362290679-c7da7ff5ee5b?q=80&w=1170&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D') center/cover;
+            opacity: 0.7;
+            z-index: 0;
         }
-
-        /* Color Spread Masking */
-        .gc-color {
+        /* Glassmorphism Outer Layout */
+        .layout-wrapper {
             position: absolute;
-            top: 0; left: 0;
-            width: 120%; height: 100%;
-            object-fit: cover;
-            transform: translateX(-10%);
-            /* Start shrunk in center */
-            clip-path: circle(0% at 50% 50%);
-            transition: clip-path 0.8s cubic-bezier(0.2, 0.9, 0.3, 1);
+            top: 20px;
+            left: 20px;
+            right: 20px;
+            bottom: 20px;
+            z-index: 5;
+            display: grid;
+            grid-template-columns: 1fr;
+            grid-template-rows: auto 1fr auto;
+            pointer-events: none; /* Let clicks pass to inner elements */
         }
-
-        /* On hover, the B&W dims and color spreads open wildly */
-        .gallery-card:hover .gc-img { filter: grayscale(100%) brightness(0.6); }
-        .gallery-card:hover .gc-color { clip-path: circle(120% at 50% 50%); }
-
-        /* Featured Artists UI Row */
-        .featured-artists {
-            position: absolute;
-            bottom: 0; left: 0;
-            width: 100vw; height: 30vh;
-            padding: 0 50px;
-            display: flex; align-items: center; gap: 40px;
-            background: linear-gradient(to top, rgba(12,15,20,1) 0%, transparent 100%);
-            z-index: 20;
-        }
-
-        .fa-title { position: absolute; top: 10px; left: 50px; font-size: 0.7rem; font-weight: 700; letter-spacing: 2px; color: var(--text-muted); }
-
-        /* Featured left box */
-        .fa-main-box {
-            width: 250px; height: 120px;
-            background: rgba(255, 255, 255, 0.8);
-            border: 1px solid rgba(255, 255, 255, 0.3);
-            /* Creating the angled chamfered corner box from screenshot */
-            clip-path: polygon(15px 0, 100% 0, 100% calc(100% - 15px), calc(100% - 15px) 100%, 0 100%, 0 15px);
-            display: flex; align-items: center; padding: 15px; gap: 15px;
-            box-shadow: inset 0 0 30px rgba(0, 200, 255, 0.1);
-        }
-
-        .fa-main-avatar {
-            width: 60px; height: 60px;
-            border-radius: 50%; object-fit: cover;
-            border: 2px solid white;
-        }
-
-        .fa-main-info { display: flex; flex-direction: column; gap: 3px; }
-        .fa-main-info h4 { font-size: 0.8rem; font-weight: 700; color: #fff; }
-        .fa-main-info p { font-size: 0.6rem; color: black; text-transform: uppercase; letter-spacing: 1px;}
-
-
-        /* Rotating Cyan Rings Avatars */
-        .fa-avatar-wrap {
-            position: relative;
-            width: 80px; height: 80px;
-            display: flex; justify-content: center; align-items: center;
-            flex-direction: column; gap: 10px;
-            cursor: pointer;
-            transition: transform 0.3s;
-        }
-        
-        .fa-avatar-wrap:hover { transform: translateY(-5px); }
-
-        .fa-avatar {
-            width: 56px; height: 56px;
-            border-radius: 50%; object-fit: cover;
-            z-index: 2;
-        }
-
-        /* SVG Ring wrapper */
-        .fa-ring {
-            position: absolute;
-            top: 2px; left: 2px; /* Center offset */
-            width: 76px; height: 76px;
-            transform: rotate(-90deg);
-        }
-
-        .fa-ring circle {
-            fill: none;
-            stroke: white;
-            stroke-width: 2.5;
-            stroke-dasharray: 200;
-            stroke-dashoffset: 140; /* The gap */
-            animation: spinRing 5s linear infinite;
-            transform-origin: 38px 38px; /* Center of 76 SVG */
-        }
-
-        @keyframes spinRing {
-            100% { transform: rotate(360deg); }
-        }
-
-        .fa-name { position: absolute; bottom: -30px; font-size: 0.7rem; color: white; white-space: nowrap; }
-    
-          /* ========================
-           PRESSURD FASHION UI SECTION
+        /* ========================
+           HEADER AREA (Pills)
            ======================== */
-        .pressurd-section {
-            position: relative;
-            width: 100vw;
-            height: 100vh;
-            background: linear-gradient(135deg, #000000 0%, #222222 50%, #444444 100%);
-            overflow: hidden;
+        .top-row {
             display: flex;
             justify-content: space-between;
-        }
-
-        /* Massive Watermark / Particles */
-        .pr-watermark {
-            position: absolute;
-            bottom: -5vh;
-            right: -5vw;
-            font-family: var(--font-head);
-            font-size: 40vw;
-            font-weight: 900;
-            line-height: 0.8;
-            color: rgba(255, 255, 255, 0.05);
-            /* very faint */
-            z-index: 0;
-            pointer-events: none;
-            white-space: nowrap;
-        }
-
-        /* Nav Menus */
-        .pr-nav {
-            position: absolute;
-            top: 40px;
-            left: 160px;
-            /* inset past vertical text */
-            display: flex;
-            gap: 30px;
-            z-index: 20;
-        }
-
-        .pr-nav a {
-            font-size: 0.85rem;
-            font-weight: 600;
-            color: rgba(255, 255, 255, 0.7);
-            display: inline-block;
-        }
-
-        .pr-nav a:hover {
-            color: #fff;
-        }
-
-        .pr-nav a.active {
-            color: #fff;
-            border-bottom: 2px solid #fff;
-            padding-bottom: 4px;
-        }
-
-        .pr-nav-right {
-            position: absolute;
-            top: 40px;
-            right: 60px;
-            display: flex;
-            gap: 30px;
-            z-index: 20;
-            align-items: center;
-        }
-
-        .pr-nav-right a {
-            font-size: 0.85rem;
-            font-weight: 600;
-            color: rgba(255, 255, 255, 0.8);
-        }
-
-        .pr-nav-right svg {
-            width: 20px;
-            height: 20px;
-            stroke: #fff;
-            fill: none;
-        }
-
-        /* Left Side */
-        .pr-left {
-            position: relative;
-            width: 25vw;
-            height: 100%;
+            align-items: flex-start;
+            pointer-events: auto;
+            margin-bottom: 15px;
             z-index: 10;
         }
-
-        .pr-dots {
-            position: absolute;
-            left: 20px;
-            top: 100px;
+        .glass-pill {
+            background: var(--glass-bg);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border: 1px solid var(--glass-border);
+            border-radius: 50px;
+            box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.3);
             display: flex;
-            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+        }
+        .logo-pill {
+            padding: 10px 40px;
+            font-family: var(--font-head);
+            font-size: 1.8rem;
+            letter-spacing: 4px;
+            font-weight: 900;
+            color: #fff;
+        }
+        .controls-group {
+            display: flex;
             gap: 15px;
         }
-
-        .pr-dot {
-            width: 12px;
-            height: 12px;
-            border: 2px solid rgba(255, 255, 255, 0.4);
-            border-radius: 4px;
-        }
-
-        .pr-dot.active {
-            background: #fff;
-            border-color: #fff;
-        }
-
-        .pr-vert-text {
-            position: absolute;
-            left: 150px;
-            bottom: 50px;
-            font-family: var(--font-head);
-            font-size: 10vw;
-            font-weight: 900;
-            line-height: 0.8;
-            color: #fff;
-            transform-origin: bottom left;
-            transform: rotate(-90deg) translate(-10%, 10%);
-            /* Vertical stack approx */
-            white-space: nowrap;
-            letter-spacing: -2px;
-        }
-
-        .pr-credits {
-            position: absolute;
-            left: 170px;
-            top: 40vh;
-            font-family: 'Inter', sans-serif;
-            /* basic readable font */
-            font-size: 0.75rem;
-            line-height: 1.6;
-            color: rgba(255, 255, 255, 0.9);
-        }
-
-        .pr-credits strong {
-            display: block;
-            font-weight: 800;
-            letter-spacing: 2px;
-            margin-bottom: 10px;
-        }
-
-        .pr-social {
-            position: absolute;
-            left: 170px;
-            bottom: 40px;
-            display: flex;
-            gap: 20px;
-            font-size: 0.75rem;
-            font-weight: 700;
-            letter-spacing: 2px;
-        }
-
-        /* Center Model Area */
-        .pr-center {
-            position: relative;
-            width: 40vw;
-            height: 100%;
-            display: flex;
-            justify-content: center;
-            align-items: flex-end;
-            z-index: 15;
-            perspective: 1500px;
-            /* For 3D Tilt */
-            transform-style: preserve-3d;
-        }
-
-        .pr-model {
-            height: 90vh;
-            /* huge */
-            object-fit: contain;
-            /* Premium cutout image placeholder */
-            content: url('https://images.unsplash.com/photo-1549618174-88aa38bbac70?q=80&w=800&auto=format&fit=crop');
-            /* Transparent PNG would be better here, using clear unsplash subject */
-            filter: drop-shadow(0 40px 60px rgba(0, 0, 0, 0.5));
-            transform: translateZ(50px);
-            /* Lifts off the background */
-            will-change: transform;
-        }
-
-        /* Pagination dots bottom center */
-        .pr-page-dots {
-            position: absolute;
-            bottom: 30px;
-            left: 50%;
-            transform: translateX(-50%);
-            display: flex;
-            gap: 8px;
-        }
-
-        .pr-page-dot {
-            width: 6px;
-            height: 6px;
-            border-radius: 50%;
-            background: rgba(255, 255, 255, 0.4);
-        }
-
-        .pr-page-dot.active {
-            background: #fff;
-            transform: scale(1.3);
-        }
-
-        /* Right Side Data */
-        .pr-right {
-            position: relative;
-            width: 35vw;
-            height: 100%;
-            z-index: 10;
-            padding: 25vh 60px 40px 40px;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            gap: 40px;
-        }
-
-        .pr-info-top {
-            display: flex;
-            justify-content: space-between;
-            align-items: flex-end;
-        }
-
-        .pr-desc-lines h5 {
-            font-size: 0.8rem;
-            font-weight: 400;
-            color: rgba(255, 255, 255, 0.8);
-            line-height: 1.5;
-        }
-
-        .pr-desc-lines h5 span {
-            display: block;
-            font-weight: 700;
-            color: #fff;
-            margin-top: 5px;
-        }
-
-        .pr-price {
-            font-family: var(--font-head);
-            font-size: 3rem;
-            font-weight: 700;
-        }
-
-        .pr-buttons {
-            display: flex;
-            width: 100%;
-            max-width: 350px;
-        }
-
-        .pr-btn {
+        .icon-pill {
+            width: 60px;
             height: 60px;
-            font-weight: 600;
-            font-family: var(--font-sub);
-            letter-spacing: 1px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        .icon-pill:hover {
+            background: rgba(255, 255, 255, 0.15);
+            transform: translateY(-2px);
+            box-shadow: 0 10px 40px 0 rgba(255, 85, 0, 0.2);
+            border-color: rgba(255, 85, 0, 0.4);
+        }
+        .icon-pill svg {
+            width: 24px;
+            height: 24px;
+            stroke: #fff;
+            fill: none;
+            stroke-width: 2;
+        }
+        .contact-pill {
+            padding: 0 30px;
+            height: 60px;
+            gap: 15px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        .contact-pill:hover {
+            background: rgba(255, 255, 255, 0.15);
+            transform: translateY(-2px);
+        }
+        .contact-icon {
+            background: #fff;
+            color: #000;
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
             display: flex;
             align-items: center;
             justify-content: center;
-            transition: background 0.3s;
         }
-
-        .pr-btn-style {
-            flex: 1;
-            background: rgba(255, 255, 255, 0.2);
-            backdrop-filter: blur(10px);
-            color: #fff;
+        
+        .contact-icon svg {
+            width: 18px;
+            height: 18px;
+            stroke: #000;
         }
-
-        .pr-btn-bid {
-            flex: 2;
-            background: rgba(0, 0, 0, 0.25);
-            color: #fff;
-        }
-
-        .pr-btn:hover {
-            background: rgba(255, 255, 255, 0.4);
-        }
-
-        .pr-thumb-row {
+        /* ========================
+           MAIN DARK PANEL
+           ======================== */
+        .main-panel {
+            position: relative;
+            background: var(--dark-panel);
+            border-radius: 40px;
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+            pointer-events: auto;
+            border: 1px solid rgba(255,255,255,0.05);
+            box-shadow: 0 30px 60px rgba(0,0,0,0.5);
             display: flex;
-            gap: 20px;
+            justify-content: center;
             align-items: center;
-            margin-top: 20px;
         }
-
-        .pr-thumb {
-            width: 70px;
-            height: 90px;
+        /* The Main Character/Image overlay */
+        .main-char-img {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
             object-fit: cover;
+            /* VR Character Placeholder */
+            background: url('https://images.unsplash.com/photo-1622979135225-d2ba269cf1ac?q=80&w=2070&auto=format&fit=crop') center/cover;
+            opacity: 0.6; /* dimmed to let UI pop */
+            transform-origin: center;
+        }
+        .bg-text-watermark {
+            position: absolute;
+            top: 30%;
+            left: 5%;
+            font-family: var(--font-head);
+            font-size: 15vw;
+            color: rgba(255,255,255,0.02);
+            pointer-events: none;
+            letter-spacing: -2px;
+            z-index: 1;
+        }
+        /* Foreground Content */
+        .main-content {
+            position: relative;
+            z-index: 10;
+            width: 100%;
+            height: 100%;
+            padding: 50px;
+        }
+        .title-container {
+            position: absolute;
+            bottom: 10%;
+            left: 5%;
+            font-family: var(--font-head);
+            font-size: 4vw;
+            line-height: 1.1;
+            text-transform: uppercase;
+            font-weight: 900;
+            max-width: 60%;
+        }
+        .title-line {
+            display: block;
+            overflow: hidden;
+        }
+        .word {
+            display: inline-block;
+            transform: translateY(110%); /* for initial animation */
+        }
+        .shop-now-btn {
+            position: absolute;
+            top: 40px;
+            right: 40px;
+            background: rgba(255,255,255,0.9);
+            color: #000;
+            padding: 15px 40px;
+            border-radius: 50px;
+            font-size: 0.9rem;
+            font-weight: 800;
+            cursor: pointer;
+            border: none;
+            transition: all 0.3s;
+        }
+        .shop-now-btn:hover {
             background: #fff;
-            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.3);
+            transform: scale(1.05);
+            box-shadow: 0 0 20px rgba(255,255,255,0.4);
         }
-
-        .pr-next-text {
-            font-size: 0.8rem;
-            font-weight: 600;
-            margin-left: 20px;
-            cursor: none;
+        /* UI Overlays (Dots and Lines) */
+        .tech-line {
+            position: absolute;
+            display: flex;
+            align-items: center;
         }
-
-        .pr-privacy {
+        .tech-dot {
+            width: 8px;
+            height: 8px;
+            background: #fff;
+            border-radius: 50%;
+            box-shadow: 0 0 10px rgba(255,255,255,0.8);
+            position: relative;
+            opacity: 0;
+        }
+        .tech-dot::before {
+            content: '';
+            position: absolute;
+            top: -4px;
+            left: -4px;
+            width: 16px;
+            height: 16px;
+            border: 1px solid rgba(255,255,255,0.4);
+            border-radius: 50%;
+            opacity: 0;
+            animation: pulseDot 2s infinite;
+        }
+        @keyframes pulseDot {
+            0% { transform: scale(1); opacity: 1; }
+            100% { transform: scale(2); opacity: 0; }
+        }
+        .tech-stroke {
+            height: 1px;
+            background: rgba(255,255,255,0.5);
+            width: 0; /* animated JS */
+        }
+        .tech-label {
+            margin-left: 15px;
+            opacity: 0; /* animated JS */
+        }
+        .tech-label h4 {
+            font-size: 0.75rem;
+            letter-spacing: 2px;
+            color: var(--text-muted);
+            margin-bottom: 2px;
+        }
+        .tech-label p {
+            font-size: 1.1rem;
+            font-weight: 700;
+            color: #fff;
+        }
+        /* Hardcoded positions simulating the screenshot overlays */
+        #ui-1 { top: 25%; left: 15%; flex-direction: row-reverse; }
+        #ui-1 .tech-label { margin-left: 0; margin-right: 15px; text-align: right; }
+        #ui-1 .tech-stroke { margin-left: 15px; } /* flipped */
+        #ui-2 { top: 45%; right: 25%; }
+        #ui-3 { top: 65%; right: 15%; }
+        /* ========================
+           BOTTOM RIGHT WIDGETS
+           ======================== */
+        .bottom-widgets {
             position: absolute;
             bottom: 40px;
-            right: 60px;
-            font-size: 0.75rem;
+            right: 40px;
+            display: flex;
+            align-items: flex-end;
+            gap: 15px;
+            pointer-events: auto;
+            z-index: 20;
+        }
+        .thumbnail-card {
+            width: 300px;
+            height: 140px;
+            padding: 15px;
+            display: flex;
+            align-items: center;
+            gap: 20px;
+            position: relative;
+            overflow: hidden;
+        }
+        .thumb-img {
+            width: 100px;
+            height: 100px;
+            border-radius: 12px;
+            object-fit: cover;
+            /* VR Thumbnail placeholder */
+            background: url('https://media.istockphoto.com/id/187148948/photo/digits-and-gear.jpg?s=2048x2048&w=is&k=20&c=9MKOk2zp6NZ50RuYug29jy7YYNMUq0dTfQmHKz0d9xY=') center/cover;
+        }
+        .thumb-info h5 {
+            font-size: 0.6rem;
+            color: var(--text-muted);
+            letter-spacing: 1px;
+            margin-bottom: 5px;
+            text-transform: uppercase;
+        }
+        
+        .thumb-info p {
+            font-size: 1.2rem;
             font-weight: 700;
+            color: #fff;
         }
-
-        /* The Custom Magnetic Class logic is handled via JS */
-        .magnetic {
-            display: inline-block;
-            cursor: none;
+        .thumb-nav {
+            display: flex;
+            gap: 10px;
         }
-
+        .nav-btn {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: #000;
+            border: 1px solid rgba(255,255,255,0.2);
+            color: #fff;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        .nav-btn:hover {
+            background: rgba(255,255,255,0.1);
+            border-color: var(--accent-orange);
+            color: var(--accent-orange);
+        }
     </style>
 </head>
 <body>
-
-    <!-- Custom Cursor -->
-    <div class="cursor-dot"></div>
-    <div class="cursor-ring"></div>
-
-    <!-- HERO / SPLIT SCREEN SECTION -->
-    <section class="hero-section" id="hero">
-        <div class="left-panel">
-            <nav class="top-nav" id="st-nav">
-                <a class="interactive" href="#" class="active">HOME</a>
-                <a class="interactive" href="#">ABOUT</a>
-                <a class="interactive" href="#">ARTICLES</a>
-                <a class="interactive" href="#">CONTACT</a>
-            </nav>
-
-            <div class="content-area">
-                <div class="main-title" id="st-title">PRIZMABRIXX</div>
-                <div class="sub-title" id="st-sub">SHOWCASE</div>
-                
-                <p class="description" id="st-desc">
-                    One of the most popular virtual character <br> you could find on the web!
-                </p>
-                
-                <button class="btn-learn interactive" id="st-btn">LEARN MORE</button>
-
-                <div class="slit-container">
-                    <div class="slit slit-1"></div>
-                    <div class="slit slit-2"></div>
-                </div>
+    <div class="bg-image"></div>
+    <div id="tsparticles"></div>
+    <div class="layout-wrapper">
+        
+        <!-- HEADER ROW -->
+        <div class="top-row">
+            <div class="glass-pill logo-pill">
+                GLITCH
             </div>
-
-            <div class="social-footer" id="st-socials">
-                <a class="interactive" href="#">FACEBOOK</a>
-                <a class="interactive" href="#">INSTAGRAM</a>
-                <a class="interactive" href="#">PINTEREST</a>
-                <a class="interactive" href="#">YOUTUBE</a>
-            </div>
-        </div>
-
-        <div class="right-panel">
-            <div class="main-hero-img" id="hero-bg"></div>
-
-            <div class="top-right-actions">
-                <div class="tr-icon search-anim interactive">
+            <div class="controls-group">
+                <div class="glass-pill icon-pill search-btn">
                     <svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
                 </div>
-                <div class="tr-icon user-anim interactive">
-                    <svg viewBox="0 0 24 24"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>
+                <div class="glass-pill icon-pill cart-btn">
+                    <svg viewBox="0 0 24 24"><path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"></path><line x1="3" y1="6" x2="21" y2="6"></line><path d="M16 10a4 4 0 0 1-8 0"></path></svg>
                 </div>
-                <div class="tr-icon menu-anim interactive">
-                    <svg viewBox="0 0 24 24"><line x1="3" y1="12" x2="21" y2="12"></line><line x1="3" y1="6" x2="21" y2="6"></line><line x1="3" y1="18" x2="21" y2="18"></line></svg>
-                </div>
-            </div>
-
-            <div class="glass-widget interactive" id="st-widget">
-                <div class="widget-thumb"></div>
-                <div class="widget-info">
-                    <h4>Virtual Reality</h4>
-                    <p>Also view the jungle book about this new... <span>Read More</span></p>
+                <div class="glass-pill contact-pill">
+                    <div class="contact-icon">
+                        <svg viewBox="0 0 24 24"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path><polyline points="22,6 12,13 2,6"></polyline></svg>
+                    </div>
+                    <span style="font-size: 0.9rem; font-weight: 600;">Contact</span>
                 </div>
             </div>
         </div>
-    </section>
-
-     <!-- NEW: SNAKE DECK SCROLL SECTION -->
-    <section class="snake-scene" id="snake-scene">
-        <div class="snake-pin" id="snake-pin">
-            
-            <div class="sk-nav">
-                <div class="sk-logo"><svg width="24" height="24" viewBox="0 0 24 24" fill="#fff"><circle cx="12" cy="12" r="10" stroke="#fff" stroke-width="2" fill="none"/></svg></div>
-                <div class="sk-tabs interactive magnetic"><a href="#">VIRTUAL</a> | <a href="#">REALITY</a></div>
-                <div style="font-size:0.8rem; letter-spacing:1px">INFINITY EDITION VR</div>
-            </div>
-
-            <!-- Focus 1: Z-Axis Zoom Graphics -->
-            <div class="snake-zoom-ui">
-                <div class="zoom-geo zoom-o"></div>
-                <div class="zoom-geo zoom-u"></div>
-                <div class="zoom-text">Instantly Generate <br> <strong>Stunning Product Images</strong></div>
-                <!-- Premium Cosmetics placeholder -->
-                <img src="https://images.unsplash.com/photo-1608248543803-ba4f8c70ae0b?q=80&w=600&auto=format&fit=crop" class="zm-prod">
-            </div>
-
-            <!-- Focus 2: The massive background text -->
-            <div class="snake-bg-text">
-                Revolutionizing<br> Product<br>Visualization
-            </div>
-
-            <!-- Focus 3: The deck that unspools -->
-            <div class="snake-deck">
-                <img src="https://images.unsplash.com/photo-1596462502278-27bfdc403348?q=80&w=400&auto=format&fit=crop" class="snake-card interactive">
-                <img src="https://images.unsplash.com/photo-1620916566398-39f1143ab7be?q=80&w=400&auto=format&fit=crop" class="snake-card interactive">
-                <img src="https://images.unsplash.com/photo-1523275335684-37898b6baf30?q=80&w=400&auto=format&fit=crop" class="snake-card interactive">
-                <img src="https://plus.unsplash.com/premium_photo-1677094310899-02303289cadf?q=80&w=1332&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D" class="snake-card interactive">
-                <img src="https://images.unsplash.com/photo-1505740420928-5e560c06d30e?q=80&w=400&auto=format&fit=crop" class="snake-card interactive">
-                <img src="https://plus.unsplash.com/premium_photo-1681010317870-44a7ca6f9bee?q=80&w=1332&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D" class="snake-card interactive">
-                <img src="https://images.unsplash.com/photo-1585386959984-a4155224a1ad?q=80&w=400&auto=format&fit=crop" class="snake-card interactive">
-                <img src="https://plus.unsplash.com/premium_photo-1711043989192-a4f64427be0b?q=80&w=784&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D" class="snake-card interactive">
-            </div>
-
-        </div>
-    </section>
-
-    <!-- ZIG-ZAG SHOWCASE SECTIONS -->
-    <div class="showcase-wrapper">
-
-        <section class="scroll-section dir-right">
-            <div class="ss-img-container">
-                <div class="ss-img img-2"></div>
-            </div>
-            <div class="ss-text-container">
-                <h2 class="ss-title">Holographic <br> Depth</h2>
-                <p class="ss-p">Embrace the beauty of dark UI and glowing accents. Smooth GSAP timelines pull images directly from the void into the structural foreground.</p>
-            </div>
-        </section>
-        
-        <section class="scroll-section dir-left">
-            <div class="ss-img-container">
-                <div class="ss-img img-1"></div>
-            </div>
-            <div class="ss-text-container">
-                <h2 class="ss-title">Dimensional <br> Shifts</h2>
-                <p class="ss-p">Experience interactive portals breaking through standard web design elements. The barriers of the flat screen are gone, replaced by sprawling new dimensions.</p>
-            </div>
-        </section>
-
-        <section class="scroll-section dir-right">
-            <div class="ss-img-container">
-                <div class="ss-img img-2"></div>
-            </div>
-            <div class="ss-text-container">
-                <h2 class="ss-title">Holographic <br> Depth</h2>
-                <p class="ss-p">Embrace the beauty of dark UI and glowing accents. Smooth GSAP timelines pull images directly from the void into the structural foreground.</p>
-            </div>
-        </section>
-
-        <section class="scroll-section dir-left">
-            <div class="ss-img-container">
-                <div class="ss-img img-3"></div>
-            </div>
-            <div class="ss-text-container">
-                <h2 class="ss-title">Architectural <br> Grids</h2>
-                <p class="ss-p">Unlock boundaries and push interfaces into the cinematic realm. Let your content glide into view flawlessly aligned with user scrolling.</p>
-            </div>
-        </section>
-
-    </div>
-
-    <!-- FINALE: 3D Text Zoom -->
-    <section class="finale-section" id="finale">
-        <div class="pin-container" id="pin-cont">
-            <div class="pin-bg"></div>
-            <!-- Huge text container -->
-            <div class="prizma-text" id="prizma-text">
-                PRIZMA <br> BRIXX
-                <div class="prizma-fill">PRIZMA <br> BRIXX</div>
-            </div>
-        </div>
-    </section>
-
-    <!-- HORIZONTAL ARTSTATION GALLERY -->
-    <section class="horizontal-section" id="artstation-sec">
-        <div class="gallery-wrap" id="gallery-wrap">
-            
-            <div class="gallery-nav">
-                <div class="gallery-nav-logo">
-                    <svg width="24" height="24" viewBox="0 0 24 24" fill="var(--cyan)"><polygon points="12 2 2 22 22 22"></polygon></svg>
-                    PRIZMABRIXX
-                </div>
-                <div class="gallery-nav-links">
-                    <a href="#" class="interactive">Featured</a>
-                    <a href="#" class="interactive">Categories</a>
-                    <a href="#" class="interactive">Search</a>
-                </div>
-            </div>
-
-            <!-- Horizontal Track -->
-            <div class="gallery-container" id="gallery-track">
-                <div class="gallery-card interactive">
-                    <img src="https://i.pinimg.com/736x/38/14/c5/3814c50429c6745dad2ec77b93780b29.jpg" class="gc-img">
-                    <img src="https://i.pinimg.com/736x/2c/d1/38/2cd13803cb6951c115902c32573d3422.jpg" class="gc-color">
-                </div>
-                <div class="gallery-card interactive">
-                    <img src="https://i.pinimg.com/736x/a0/85/db/a085dba09f4ea2488b9bcfeb52b0d5f8.jpg" class="gc-img">
-                    <img src="https://i.pinimg.com/736x/fc/95/37/fc9537223b42b043938cb7c13dbb2219.jpg" class="gc-color">
-                </div>
-                <div class="gallery-card interactive">
-                    <img src="https://i.pinimg.com/736x/4e/9b/00/4e9b008d7a9bbd74b94500af2dac3cb3.jpg" class="gc-img">
-                    <img src="https://i.pinimg.com/736x/b2/c7/a8/b2c7a83f73717cb67e931f598002cee8.jpg" class="gc-color">
-                </div>
-                <div class="gallery-card interactive">
-                    <img src="https://i.pinimg.com/736x/d6/63/35/d66335a6bc9585113d4b4c3769903d7f.jpg" class="gc-img">
-                    <img src="https://i.pinimg.com/736x/3d/48/b3/3d48b38b120a9f6ea78d4702ecca1775.jpg" class="gc-color">
-                </div>
-            </div>
-
-            <!-- Featured Artists Row -->
-            <div class="featured-artists">
-                <span class="fa-title">TESTEMONIES</span>
+        <!-- MAIN PANEL -->
+        <div class="main-panel">
+            <div class="main-char-img" id="main-parallax"></div>
+            <div class="bg-text-watermark">GLITCH</div>
+            <div class="main-content">
+                <button class="shop-now-btn">BOOK NOW</button>
                 
-                <!-- Main Featured Block -->
-                <div class="fa-main-box interactive">
-                    <img src="https://i.pravatar.cc/100?img=11" class="fa-main-avatar">
-                    <div class="fa-main-info">
-                        <h4>SASANK GUPTA</h4>
-                        <p>OUR CO-FUNDER</p>
+                <div class="title-container" id="main-title">
+                    VIRTUAL <br> REALITY, <br> UNBOUND.
+                </div>
+                <!-- Product Overlays -->
+                <div class="tech-line" id="ui-1">
+                    <div class="tech-label">
+                        <h4>HAPTIC NEURO-LINK</h4>
+                        <p>$230</p>
+                    </div>
+                    <div class="tech-stroke" data-width="120px"></div>
+                    <div class="tech-dot"></div>
+                </div>
+                <div class="tech-line" id="ui-2">
+                    <div class="tech-dot"></div>
+                    <div class="tech-stroke" data-width="150px"></div>
+                    <div class="tech-label">
+                        <h4>OMNI-MOTION GLOVES</h4>
+                        <p>$120</p>
                     </div>
                 </div>
-
-                <!-- Artist Circles with Spinning Rings -->
-                <div class="fa-avatar-wrap interactive">
-                    <img src="https://i.pinimg.com/1200x/43/1e/0d/431e0d5c1894cbdaea28b4eb61643a23.jpg" class="fa-avatar">
-                    <svg class="fa-ring" viewBox="0 0 76 76">
-                        <circle cx="38" cy="38" r="34"></circle>
-                    </svg>
-                    <span class="fa-name">Marco Alves</span>
-                </div>
-
-                <div class="fa-avatar-wrap interactive">
-                    <img src="https://i.pravatar.cc/100?img=32" class="fa-avatar">
-                    <svg class="fa-ring" viewBox="0 0 76 76">
-                        <circle cx="38" cy="38" r="34"></circle>
-                    </svg>
-                    <span class="fa-name">Edward Lindgren</span>
-                </div>
-
-                <div class="fa-avatar-wrap interactive">
-                    <img src="https://i.pravatar.cc/100?img=15" class="fa-avatar">
-                    <svg class="fa-ring" viewBox="0 0 76 76" style="animation-delay: -1s">
-                        <circle cx="38" cy="38" r="34"></circle>
-                    </svg>
-                    <span class="fa-name">Tao Yi</span>
-                </div>
-
-                <div class="fa-avatar-wrap interactive">
-                    <img src="https://i.pravatar.cc/100?img=42" class="fa-avatar">
-                    <svg class="fa-ring" viewBox="0 0 76 76" style="animation-delay: -2s">
-                        <circle cx="38" cy="38" r="34"></circle>
-                    </svg>
-                    <span class="fa-name">Somun Ae-Ri</span>
-                </div>
-
-                <div class="fa-avatar-wrap interactive">
-                    <img src="https://i.pravatar.cc/100?img=52" class="fa-avatar">
-                    <svg class="fa-ring" viewBox="0 0 76 76" style="animation-delay: -3s">
-                        <circle cx="38" cy="38" r="34"></circle>
-                    </svg>
-                    <span class="fa-name">Grigoriy Kozhukhov</span>
+                <div class="tech-line" id="ui-3">
+                    <div class="tech-dot"></div>
+                    <div class="tech-stroke" data-width="100px"></div>
+                    <div class="tech-label">
+                        <h4>SENSORY FEEDBACK SUIT</h4>
+                        <p>$450</p>
+                    </div>
                 </div>
             </div>
-
         </div>
-    </section>
-
-     <!-- NEW SECTION: PRESSURD FASHION PARALLAX -->
-    <section class="pressurd-section" id="pressurd-sec">
-        <div class="pr-watermark">ELECTRO</div>
-
-        <!-- Left Nav and Content -->
-        <div class="pr-nav">
-            <a href="#" class="magnetic interactive active">VR</a>
-            <a href="#" class="magnetic interactive">DRONE</a>
-            <a href="#" class="magnetic interactive">Customise</a>
-        </div>
-
-        <div class="pr-left">
-            <div class="pr-dots">
-                <div class="pr-dot"></div>
-                <div class="pr-dot"></div>
-                <div class="pr-dot active"></div>
-                <div class="pr-dot"></div>
-            </div>
-
-            <div class="pr-vert-text">PRESSURD</div>
-
-            <div class="pr-credits">
-                <strong>CREDITS</strong>
-                Agency: @prbxxx <br>
-                AI: @mprbxxx <br>
-                Retouching: @vhere.com <br><br>
-                WeSayHi Production Team:<br>
-                @lohit <br>
-                @vatsal<br>
-                @minniatur
-            </div>
-
-            <div class="pr-social">
-                <a href="#" class="magnetic interactive">IN</a>
-                <a href="#" class="magnetic interactive">TW</a>
-                <a href="#" class="magnetic interactive">YT</a>
-                <a href="#" class="magnetic interactive">OS</a>
+        
+    </div>
+    <!-- WIDGETS outside the grid to overlay the bottom right perfectly -->
+    <div class="bottom-widgets">
+        <div class="glass-pill thumbnail-card">
+            <div class="thumb-img"></div>
+            <div class="thumb-info">
+                <h5>CRIMSON PHANTOM</h5>
+                <p>$450</p>
             </div>
         </div>
-
-        <!-- Center Model -->
-        <div class="pr-center">
-            <img src="https://plus.unsplash.com/premium_photo-1682023586963-70436dba774b?q=80&w=784&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
-                class="pr-model" alt="Fashion Model">
-            <div class="pr-page-dots">
-                <div class="pr-page-dot"></div>
-                <div class="pr-page-dot active"></div>
-                <div class="pr-page-dot"></div>
-                <div class="pr-page-dot"></div>
-                <div class="pr-page-dot"></div>
-                <div class="pr-page-dot"></div>
-            </div>
+        <div class="thumb-nav">
+            <button class="glass-pill nav-btn">&larr;</button>
+            <button class="glass-pill nav-btn">&rarr;</button>
         </div>
-
-        <!-- Right Specs and Bidding -->
-        <div class="pr-nav-right">
-            <a href="#" class="magnetic interactive"><svg viewBox="0 0 24 24">
-                    <circle cx="11" cy="11" r="8"></circle>
-                    <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
-                </svg> Search</a>
-            <a href="#" class="magnetic interactive">My Account</a>
-            <a href="#" class="magnetic interactive"><svg viewBox="0 0 24 24">
-                    <path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"></path>
-                    <line x1="3" y1="6" x2="21" y2="6"></line>
-                    <path d="M16 10a4 4 0 0 1-8 0"></path>
-                </svg></a>
-        </div>
-
-        <div class="pr-right">
-            <div class="pr-info-top">
-                <div class="pr-desc-lines">
-                    <h5>Colour: <br> <span>PurpleHaze</span></h5>
-                    <br><br>
-                    <h5>ID: 324563</h5>
-                </div>
-                <div class="pr-price">$750</div>
-            </div>
-
-            <div class="pr-buttons">
-                <div class="pr-btn pr-btn-style interactive magnetic">PRODUCT</div>
-                <div class="pr-btn pr-btn-bid interactive magnetic">DRONE</div>
-            </div>
-
-            <div class="pr-thumb-row">
-                <img src="https://plus.unsplash.com/premium_photo-1677094310899-02303289cadf?q=80&w=1332&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
-                    class="pr-thumb interactive magnetic">
-                <img src="https://plus.unsplash.com/premium_photo-1677094310899-02303289cadf?q=80&w=1332&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
-                    class="pr-thumb interactive magnetic">
-                <div class="pr-next-text interactive magnetic">Next &rarr;</div>
-            </div>
-
-            <a href="#" class="pr-privacy interactive magnetic">Privacy</a>
-        </div>
-
-    </section>
-
-    <!-- JavaScript Execution -->
+    </div>
     <script>
         // -------------------------
-        // 1. Lenis Smooth Scroll
+        // 1. Particle Initialization
         // -------------------------
-        const lenis = new Lenis({
-            duration: 1.2,
-            easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)), 
-            direction: 'vertical',
-            gestureDirection: 'vertical',
-            smooth: true,
+        tsParticles.load("tsparticles", {
+            background: {
+                color: { value: "transparent" }
+            },
+            fpsLimit: 60,
+            interactivity: {
+                events: {
+                    onHover: { enable: true, mode: "repulse" },
+                    resize: true
+                },
+                modes: {
+                    repulse: { distance: 100, duration: 0.4 }
+                }
+            },
+            particles: {
+                color: { value: "#ff5500" }, // Accent orange particles
+                links: {
+                    color: "#ffffff",
+                    distance: 150,
+                    enable: true,
+                    opacity: 0.1,
+                    width: 1
+                },
+                move: {
+                    direction: "none",
+                    enable: true,
+                    outModes: { default: "bounce" },
+                    random: true,
+                    speed: 1,
+                    straight: false
+                },
+                number: { value: 60, density: { enable: true, area: 800 } },
+                opacity: { value: 0.5 },
+                shape: { type: "circle" },
+                size: { value: { min: 1, max: 3 } }
+            },
+            detectRetina: true
         });
-
-        function raf(time) {
-            lenis.raf(time);
-            requestAnimationFrame(raf);
-        }
-        requestAnimationFrame(raf);
-
         // -------------------------
-        // 2. Custom Cursor Logic
+        // 2. GSAP Animations Setups
         // -------------------------
-        const cursorDot = document.querySelector('.cursor-dot');
-        const cursorRing = document.querySelector('.cursor-ring');
+        // Initialize text splitting for the title
+        const splitTitle = new SplitType('#main-title', { types: 'lines, words' });
         
-        document.addEventListener('mousemove', (e) => {
-            // Instant dot
-            cursorDot.style.left = e.clientX + 'px';
-            cursorDot.style.top = e.clientY + 'px';
-            // Trailing ring
-            gsap.to(cursorRing, { x: e.clientX, y: e.clientY, duration: 0.15, ease: "power2.out" });
+        // Custom wrapper for overflow hidden on lines for clean reveal
+        splitTitle.lines.forEach(line => {
+            const wrapper = document.createElement('div');
+            wrapper.classList.add('title-line');
+            line.parentNode.insertBefore(wrapper, line);
+            wrapper.appendChild(line);
         });
-
-        // Hover effect for interactive items
-        const interactives = document.querySelectorAll('.interactive, a, button, .gallery-card');
-        interactives.forEach(el => {
-            el.addEventListener('mouseenter', () => cursorRing.classList.add('cursor-hover'));
-            el.addEventListener('mouseleave', () => cursorRing.classList.remove('cursor-hover'));
-        });
-
+        const tl = gsap.timeline({ defaults: { ease: "power3.out" } });
+        // Initial states hidden
+        gsap.set('.glass-pill', { y: -50, opacity: 0 });
+        gsap.set('.thumbnail-card, .nav-btn', { y: 50, opacity: 0 });
+        gsap.set('.main-panel', { scale: 0.9, opacity: 0, borderRadius: '80px' });
+        gsap.set('.main-char-img', { scale: 1.2 });
+        gsap.set('.shop-now-btn', { opacity: 0, scale: 0.8 });
         // -------------------------
-        // 3. GSAP Initialization
+        // 3. The Page Load Sequence (Mind-Blowing Reveal)
         // -------------------------
-        gsap.registerPlugin(ScrollTrigger);
-
-        // Split text for hero
-        const titleText = new SplitType('#st-title', { types: 'chars' });
-        const subTitleText = new SplitType('#st-sub', { types: 'chars' });
-        const descText = new SplitType('#st-desc', { types: 'lines' });
-
-        // Hero Initial States
-        gsap.set('.left-panel', { x: "-10%" });
-        gsap.set('#hero-bg', { scale: 1.15, filter: "blur(10px)", opacity: 0 });
-        gsap.set('#st-nav a, #st-socials a, .top-right-actions .tr-icon', { y: 20, opacity: 0 });
-        gsap.set(titleText.chars, { y: "100%", opacity: 0, rotationX: -90, transformOrigin: "bottom center" });
-        gsap.set(subTitleText.chars, { y: "-50%", filter: "blur(10px)", opacity: 0 });
-        gsap.set(descText.lines, { y: 20, opacity: 0 });
-        gsap.set('#st-btn', { opacity: 0, scale: 0.9 });
-        gsap.set('#st-widget', { x: 50, opacity: 0 });
-        
-        // --- Mind-Blowing Hero Load Timeline ---
-        const tlLoad = gsap.timeline({ defaults: { ease: "power4.out" } });
-        tlLoad.to('#hero-bg', { scale: 1, filter: "blur(0px)", opacity: 1, duration: 3, ease: "power2.out" })
-              .to('.left-panel', { x: "0%", duration: 2 }, "-=2.8")
-              .to(titleText.chars, { y: "0%", opacity: 1, rotationX: 0, stagger: 0.04, duration: 1.2, ease: "back.out(1.5)" }, "-=2")
-              .to(subTitleText.chars, { y: "0%", filter: "blur(0px)", opacity: 1, stagger: 0.05, duration: 1.2 }, "-=1.5")
-              .to('.slit-1', { scaleX: 1, duration: 1.5, ease: "power3.inOut" }, "-=1.5")
-              .to('.slit-2', { scaleX: 1, duration: 1.5, ease: "power3.inOut" }, "-=1.4")
-              .to(descText.lines, { y: 0, opacity: 1, stagger: 0.1, duration: 0.8 }, "-=1")
-              .to('#st-btn', { opacity: 1, scale: 1, duration: 0.6, ease: "back.out(2)" }, "-=0.8")
-              .to('#st-nav a, #st-socials a, .top-right-actions .tr-icon', { y: 0, opacity: 1, stagger: 0.1, duration: 0.8 }, "-=1.2")
-              .to('#st-widget', { x: 0, opacity: 1, duration: 1, ease: "back.out(1)" }, "-=1");
-
-         // --- NEW: THE "SNAKE DECK" Z-AXIS SCROLL ANIMATION ---
-        
-        // 1. Initial setups
-        gsap.set('.snake-zoom-ui', { scale: 0.05, opacity: 0, z: -1000 });
-        gsap.set('.snake-card', { scale: 0, opacity: 0 }); // cards start completely hidden
-        gsap.set('.snake-bg-text', { scale: 0.8, opacity: 0 });
-
-        // 2. The Timeline
-        const snakeTl = gsap.timeline({
-            scrollTrigger: {
-                trigger: '#snake-scene',
-                start: 'top top',
-                end: 'bottom bottom', // Takes 400vh to scrub
-                scrub: 1.5, // 1.5 adds a slight smooth delay to the scroll
-                pin: '#snake-pin'
-            }
-        });
-
-        // Phase A: The camera flies INTO the UI (images coming towards screen on z-axis)
-        snakeTl.to('.snake-zoom-ui', { scale: 1, opacity: 1, z: 0, duration: 2, ease: 'power2.out' })
-               .to('.snake-zoom-ui', { scale: 10, opacity: 0, duration: 2, ease: 'power2.in' }) // Flies past camera
-               
-        // Phase B: The massive background text fades in
-               .to('.snake-bg-text', { opacity: 1, scale: 1, duration: 1 }, "-=0.5")
-
-        // Phase C: The stack of cards instantly appears in the center
-               .to('.snake-card', { scale: 1, opacity: 1, stagger: 0, duration: 0.5 })
-
-        // Phase D: The Snake Unspooling Effect!
-        // Calculate dynamic math for the wave "snake" curved layout.
-        const deckCards = gsap.utils.toArray('.snake-card');
-        
-        deckCards.forEach((card, i) => {
-            // We want cards to spread out from left to right.
-            const spreadWidth = window.innerWidth * 0.8; 
-            const startX = -spreadWidth / 2;
-            const xStep = spreadWidth / deckCards.length;
+        // 1. Reveal Main Panel beautifully
+        tl.to('.main-panel', {
+            scale: 1,
+            opacity: 1,
+            borderRadius: '40px',
+            duration: 1.5,
+            ease: "expo.out"
+        })
+        // 2. Image slow zoom out inside the panel
+        .to('.main-char-img', {
+            scale: 1,
+            duration: 3,
+            ease: "power2.out"
+        }, "-=1.5")
+        // 3. Drop down the top UI elements
+        .to('.logo-pill', { y: 0, opacity: 1, duration: 0.8 }, "-=2.5")
+        .to('.icon-pill, .contact-pill', { y: 0, opacity: 1, stagger: 0.1, duration: 0.8 }, "-=2.3")
+        // 4. Slide up the bottom UI elements
+        .to('.thumbnail-card', { y: 0, opacity: 1, duration: 0.8 }, "-=2.0")
+        .to('.nav-btn', { y: 0, opacity: 1, stagger: 0.1, duration: 0.8 }, "-=1.8")
+        // 5. Shop Now button pop in
+        .to('.shop-now-btn', { opacity: 1, scale: 1, duration: 0.6, ease: "back.out(1.7)" }, "-=1.5")
+        // 6. Text Glitch / Type Reveal
+        .fromTo(splitTitle.words, 
+            { y: "110%", opacity: 0 }, 
+            { y: "0%", opacity: 1, duration: 0.8, stagger: 0.05, ease: "power4.out" }, 
+            "-=1.5"
+        );
+        // -------------------------
+        // 4. Tech UI Lines Drawing Sequence
+        // -------------------------
+        const techLines = document.querySelectorAll('.tech-line');
+        techLines.forEach((line, index) => {
+            const dot = line.querySelector('.tech-dot');
+            const stroke = line.querySelector('.tech-stroke');
+            const targetWidth = stroke.getAttribute('data-width');
+            const label = line.querySelector('.tech-label');
+            const lineTl = gsap.timeline({ delay: 1.5 + (0.3 * index) });
             
-            const targetX = startX + (i * xStep) + (Math.random() * 20); // spread evenly horizontally
-            const targetY = Math.sin(i * 0.8) * 150; // The curve/wave factor for the snake shape (sinusoidal)
-            const targetRot = (i - (deckCards.length/2)) * 6; // Fanning rotation
-
-            // Staggering the unspool over exactly 3 seconds on the timeline
-            snakeTl.to(card, {
-                x: targetX,
-                y: targetY,
-                rotationZ: targetRot,
-                duration: 3,
-                ease: "power2.inOut",
-            }, 'snake-spread'); // The shared label ensures they all animate at the same phase
+            lineTl.to(dot, { opacity: 1, scale: 1, duration: 0.5, ease: "back.out(2)" })
+                  .to(stroke, { width: targetWidth, duration: 0.6, ease: "power2.out" })
+                  .to(label, { opacity: 1, x: line.id === 'ui-1' ? -10 : 10, duration: 0.4 }, "-=0.2"); // x dir depends on side
         });
-
-        // Hover popup mechanic for cards when snake is idle
-        deckCards.forEach(card => {
-            card.addEventListener('mouseenter', () => gsap.to(card, { scale: 1.1, zIndex: 100, duration: 0.3 }));
-            card.addEventListener('mouseleave', () => gsap.to(card, { scale: 1, zIndex: 'auto', duration: 0.3 }));
-        });
-
-
         // -------------------------
-        // 4. Zig-Zag Showcase Scroll Triggers
+        // 5. Parallax on Mouse Move (Subtle depth)
         // -------------------------
-        const showcaseSections = document.querySelectorAll('.scroll-section');
-        showcaseSections.forEach((sec) => {
-            const isRightDir = sec.classList.contains('dir-right'); 
-            const imgCont = sec.querySelector('.ss-img-container');
-            const imgInner = sec.querySelector('.ss-img');
-            const textCont = sec.querySelector('.ss-text-container');
-            const textLines = new SplitType(sec.querySelector('.ss-title'), { types: 'lines, chars' });
-
-            gsap.from(imgCont, {
-                x: isRightDir ? '50%' : '-50%',
-                opacity: 0, duration: 1.5, ease: 'power3.out',
-                scrollTrigger: { trigger: sec, start: 'top 70%' }
-            });
-
-            gsap.fromTo(imgInner, 
-                { scale: 1.3, x: isRightDir ? '-20%' : '20%' },
-                { scale: 1, x: '0%', ease: 'none', scrollTrigger: { trigger: sec, start: 'top bottom', end: 'bottom top', scrub: true } }
-            );
-
-            gsap.from(textCont, {
-                x: isRightDir ? '-50%' : '50%',
-                opacity: 0, duration: 1.5, ease: 'power3.out',
-                scrollTrigger: { trigger: sec, start: 'top 70%' }
-            });
-
-            gsap.from(textLines.chars, {
-                y: 50, opacity: 0, rotationX: 45, stagger: 0.02, duration: 1, ease: 'back.out(1.5)',
-                scrollTrigger: { trigger: sec, start: 'top 60%' }
-            });
-        });
-
-        // -------------------------
-        // 5. 3D "PRIZMA BRIXX" Finale Zoom
-        // -------------------------
-        const finaleTl = gsap.timeline({
-            scrollTrigger: {
-                trigger: '#finale', start: 'top top', end: 'bottom bottom', 
-                scrub: 1, pin: '#pin-cont'
-            }
-        });
-        finaleTl.to('#prizma-text', { scale: 60, opacity: 0, ease: "power2.in" });
-
-        // -------------------------
-        // 6. Horizontal ArtStation Scroll
-        // -------------------------
-        const track = document.getElementById("gallery-track");
-        const artSec = document.getElementById("artstation-sec");
-        
-        // This pins the ArtStation section and moves the track horizontally.
-        gsap.to(track, {
-            x: () => -(track.scrollWidth - window.innerWidth) + "px",
-            ease: "none",
-            scrollTrigger: {
-                trigger: artSec,
-                pin: true,
-                start: "top top",
-                end: () => "+=" + (track.scrollWidth - window.innerWidth), // scroll distance = track width
-                scrub: 1,
-                invalidateOnRefresh: true,
-            }
-        });
-
-         // --- NEW: Pressurd Purple Fashion Section Animation & Mouse Tracking ---
-        const pressurdSec = document.getElementById('pressurd-sec');
-        const prModel = document.querySelector('.pr-model');
-        const prWatermark = document.querySelector('.pr-watermark');
-
-        // Entry Animations
-        gsap.from('.pr-vert-text', { y: 200, opacity: 0, duration: 1.5, ease: 'power4.out', scrollTrigger: { trigger: pressurdSec, start: "top 60%" } });
-        gsap.from('.pr-model', { scale: 0.8, y: 100, opacity: 0, duration: 1.5, ease: 'back.out(1.5)', scrollTrigger: { trigger: pressurdSec, start: "top 50%" } });
-        gsap.from('.pr-right > *', { x: 50, opacity: 0, stagger: 0.1, duration: 1, ease: 'power3.out', scrollTrigger: { trigger: pressurdSec, start: "top 40%" } });
-        gsap.from('.pr-watermark', { opacity: 0, scale: 0.8, duration: 2, ease: 'power2.out', scrollTrigger: { trigger: pressurdSec, start: "top 40%" } });
-
-        // Mouse Parallax Engine for Pressurd Section
-        pressurdSec.addEventListener('mousemove', (e) => {
-            let xAxis = (window.innerWidth / 2 - e.pageX) / 20;
-            let yAxis = (window.innerHeight / 2 - e.pageY) / 20;
-
-            // 3D Tilt the model
-            gsap.to(prModel, {
-                rotationY: xAxis,
-                rotationX: -yAxis, // flipped for natural tilt
-                duration: 0.5,
+        document.addEventListener('mousemove', (e) => {
+            const xAxis = (window.innerWidth / 2 - e.pageX) / 50;
+            const yAxis = (window.innerHeight / 2 - e.pageY) / 50;
+            
+            gsap.to('.main-char-img', {
+                x: xAxis,
+                y: yAxis,
+                duration: 1,
                 ease: "power1.out"
             });
-
-            // Move the background watermark opposite to create massive depth
-            gsap.to(prWatermark, {
+            
+            gsap.to('.title-container', {
                 x: xAxis * -1.5,
                 y: yAxis * -1.5,
-                duration: 1.5,
-                ease: "power2.out"
+                duration: 1,
+                ease: "power1.out"
             });
         });
-
-        // Reset tilt on leave
-        pressurdSec.addEventListener('mouseleave', () => {
-            gsap.to(prModel, { rotationY: 0, rotationX: 0, duration: 1, ease: "elastic.out(1, 0.3)" });
-            gsap.to(prWatermark, { x: 0, y: 0, duration: 1, ease: "elastic.out(1, 0.3)" });
-        });
-
     </script>
 </body>
 </html>
